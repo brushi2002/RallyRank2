@@ -1,6 +1,6 @@
-# Welcome to your Expo app 👋
+# Welcome to Rally Rank
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a React Native App Built using Expo with a AppWrite Backend. We also use RevenueCat to manage Subscriptions. 
 
 ## Get started
 
