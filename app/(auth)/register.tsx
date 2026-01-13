@@ -9,7 +9,6 @@ import PhoneInput from 'react-native-international-phone-number'
 import { doesEmailExist, doesLadderCodeExist, registerUser } from '../../lib/appwrite'
 import { LocationData, getLocationData } from '../../lib/geolocationApi'
 
-
 const Register = () => {
 
   const { refetch, loading, isLoggedIn } = useGlobalContext();
@@ -20,6 +19,7 @@ const Register = () => {
   const [selectedCountry, setSelectedCountry] = useState<any>();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { control, handleSubmit, formState: { errors }, setError } = useForm<FormData>({mode: 'onChange'});
+  
   useEffect(() => {
     const fetchLocation = async () => {
       try {

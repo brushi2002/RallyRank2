@@ -61,7 +61,7 @@ const Layout =()=>{
     }
 
     if(!isLoggedIn) {
-        return <Redirect href="../(auth)/sign-in" />
+        return <Redirect href="../(auth)/sign-in2" />
     }
     else if(isLoggedIn && !user?.emailVerified) {
         if(user?.email){

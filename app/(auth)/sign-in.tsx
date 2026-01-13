@@ -7,10 +7,9 @@ import { Link, Redirect, router } from 'expo-router'
 import * as React from 'react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, Dimensions, Image, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import OnboardingFlow from '../../components/OnBoardingFlow'
+import { Alert, Dimensions, Image, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { styles } from '../../constants/styles'
 import { LocationData } from '../../lib/geolocationApi'
-
 
 const SignIn = () => {
   const { refetch, loading, isLoggedIn } = useGlobalContext();
@@ -37,13 +36,6 @@ const SignIn = () => {
     checkOnboardingStatus();
   }, []);
 
-   const handleOnboardingComplete = async () => {
-    await AsyncStorage.setItem('hasSeenOnboarding', 'true');
-    setShowOnboarding(false);
-    // Redirect to register page for first-time users
-    router.push('/(auth)/register');
-  };
-
  interface FormData {
     Email: string;
     Password: string;
@@ -53,11 +45,6 @@ const SignIn = () => {
 
   if (!loading && isLoggedIn) {
     return <Redirect href="/" />;
-  }
-
-  // Show onboarding if user hasn't seen it yet
-  if (showOnboarding) {
-    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
   const handleLogin = async (data: FormData) => {
@@ -184,9 +171,9 @@ const SignIn = () => {
                 style={styles.submitButton}
                 onPress={handleSubmit(handleLogin)}
                 disabled={isLoading}
-              >
+              > 
                 <Text style={styles.submitButtonText}>
-                  {isLoading ? 'Submitting...' : 'Submit'}
+                  {isLoading ? 'Submitting...' : 'Sign in'}
                 </Text>
               </TouchableOpacity>
 
@@ -237,208 +224,5 @@ const SignIn = () => {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#316536',
-  },
-  background: {
-    flex: 1,
-    backgroundColor: '#316536',
-    position: 'relative',
-  },
-  titleContainer: {
-    alignItems: 'center',
-    marginTop: 60,
-    marginBottom: 20,
-  },
-  appTitle: {
-    fontSize: 36,
-    fontWeight: '400',
-    color: '#FFF',
-    fontFamily: 'Rubik',
-    textAlign: 'center',
-  },
-  tagline: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#FFF',
-    fontFamily: 'Rubik',
-    textAlign: 'center',
-    marginTop: 8
-  },
-  tennisBall: {
-    position: 'absolute',
-    top: 150,
-    right: -20,
-    width: 180,
-    height: 126 ,
-    transform: [{ rotate: '17.812deg' }],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  tennisCourtImage: {
-    position: 'absolute',
-    bottom: -100,
-    left: -40,
-    width: 450,
-    height: 250,
-    opacity: 0.8,
-  },
-  formContainer: {
-    position: 'absolute',
-    left: 0,
-    top: 220,
-    width: 348,
-    height: 560,
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
-    overflow: 'hidden',
-  },
-  blurContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-    padding: 20,
-    borderRadius: '0 30px 30px 0',
-  },
-  welcomeTitle: {
-    fontSize: 20,
-    fontWeight: '400',
-    color: '#FFF',
-    fontFamily: 'Rubik',
-    marginBottom: 8,
-  },
-  welcomeSubtitle: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#FFF',
-    fontFamily: 'Rubik',
-    marginBottom: 20,
-    lineHeight: 16,
-  },
-  formScrollView: {
-    flex: 1,
-    marginBottom: 20,
-  },
-  inputGroup: {
-    marginBottom: 15,
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: 'rgba(255, 255, 255, 0.6)',
-    fontFamily: 'Rubik',
-    marginBottom: 4,
-  },
-  input: {
-    height: 30,
-    color: '#FFF',
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    paddingVertical: 0,
-  },
-  inputUnderline: {
-    height: 1,
-    backgroundColor: '#FFF',
-    marginTop: 5,
-    width: 227,
-  },
-  phoneInputContainer: {
-    backgroundColor: 'transparent',
-  },
-  phoneContainer: {
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    height: 30,
-  },
-  phoneInput: {
-    backgroundColor: 'transparent',
-    color: '#FFF',
-    fontSize: 16,
-    fontFamily: 'Rubik',
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 12,
-    marginTop: 4,
-    fontFamily: 'Rubik',
-  },
-  submitButton: {
-    width: 161,
-    height: 40,
-    backgroundColor: '#FFF',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-    marginTop: 10,
-  },
-  submitButtonText: {
-    color: '#316536',
-    fontSize: 16,
-    fontWeight: '400',
-    fontFamily: 'Rubik',
-    textAlignVertical: 'center',
-  },
-  socialButtonsContainer: {
-    gap: 12,
-    marginBottom: 16,
-  },
-  socialButton: {
-    width: 237,
-    height: 35,
-    backgroundColor: '#FFF',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  socialButtonText: {
-    color: '#000',
-    fontSize: 14,
-    fontWeight: '400',
-    fontFamily: 'Rubik',
-  },
-  forgotPasswordContainer: {
-    alignItems: 'flex-start',
-  },
-  forgotPasswordText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: '400',
-    fontFamily: 'Rubik',
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 4,
-  },
-  resetLinkText: {
-    color: '#EFEEBC',
-  },
-  signInContainer: {
-    alignItems: 'center',
-  },
-  signInText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: '400',
-    fontFamily: 'Rubik',
-    textAlign: 'center',
-  },
-  signInLinkText: {
-    color: '#EFEEBC',
-    textDecorationLine: 'underline',
-  },
-});
 
 export default SignIn;
