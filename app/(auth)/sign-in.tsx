@@ -1,5 +1,6 @@
 import { loginwithEmail } from '@/lib/appwrite'
 //import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ExternalButtons } from '@/components/auth/ExternalButtons'
 import { useGlobalContext } from '@/lib/globalprovider'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BlurView } from 'expo-blur'
@@ -166,21 +167,26 @@ const SignIn = () => {
                 )}
               </View>
 
-              {/* Submit Button */}
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleSubmit(handleLogin)}
-                disabled={isLoading}
-              > 
-                <Text style={styles.submitButtonText}>
-                  {isLoading ? 'Submitting...' : 'Sign in'}
-                </Text>
-              </TouchableOpacity>
+              {/* Buttons Container */}
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                  style={styles.submitButton}
+                  onPress={handleSubmit(handleLogin)}
+                  disabled={isLoading}
+                >
+                  <Text style={styles.submitButtonText}>
+                    {isLoading ? 'Submitting...' : 'Sign In With Email'}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* External Login Buttons */}
+                <ExternalButtons signup={false} />
+              </View>
 
               {/* Sign In Link */}
                 <Text style={styles.signInText}>
                   Don't have an account? </Text>
-                  <TouchableOpacity onPress={() => router.push('/register')} style={styles.signInContainer}>
+                  <TouchableOpacity onPress={() => router.push('/sign-up')} style={styles.signInContainer}>
                     <Text style={styles.signInLinkText}> Click here to Register</Text>
                   </TouchableOpacity>
 
@@ -195,8 +201,11 @@ const SignIn = () => {
                 
 
                 <Text style={[styles.signInText, { marginTop: 20 }]}>
-                  If you are interested in testing, please send me an email <Link href="mailto:eric@rally-rank.com">eric@rally-rank.com</Link>
+                  If you are interested in testing, please send me an email
                 </Text>
+                <Link href="mailto:eric@rally-rank.com">
+                  <Text style={styles.signInLinkText}>eric@rally-rank.com</Text>
+                </Link>
             </ScrollView>
 
             {/* Social Login Buttons */}

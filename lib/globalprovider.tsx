@@ -22,6 +22,7 @@ interface User {
     Country: string;
     DeviceType: string;
     labels?: string[];
+    isLeagueMember: boolean;
     leagueinfo: Record<string, any>;
     $collectionId?: string;
     $databaseId?: string;
@@ -46,6 +47,7 @@ export const GlobalProvider = ({children}:{children: React.ReactNode}) => {
 
     console.log("User Info****", user);
     //setUser(user);
+    //const isLoggedIn = true;
     const isLoggedIn = !!user;
     return (
         <GlobalContext.Provider 

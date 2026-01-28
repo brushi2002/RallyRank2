@@ -1,13 +1,13 @@
-import { useGlobalContext } from '@/lib/globalprovider'
-import { BlurView } from 'expo-blur'
-import { Link, Redirect, router } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import PhoneInput from 'react-native-international-phone-number'
-import { doesEmailExist, doesLadderCodeExist, registerUser } from '../../lib/appwrite'
-import { LocationData, getLocationData } from '../../lib/geolocationApi'
+import { useGlobalContext } from '@/lib/globalprovider';
+import { BlurView } from 'expo-blur';
+import { Link, Redirect, router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ExternalButtons } from '../../components/auth/ExternalButtons';
+import { doesEmailExist, registerUser } from '../../lib/appwrite';
+import { LocationData, getLocationData } from '../../lib/geolocationApi';
 
 const Register = () => {
 
@@ -19,6 +19,8 @@ const Register = () => {
   const [selectedCountry, setSelectedCountry] = useState<any>();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { control, handleSubmit, formState: { errors }, setError } = useForm<FormData>({mode: 'onChange'});
+  const [isEmailSignUp, setisEmailSignUp] = useState(false)
+  const [isEmailEntered, setisEmailEntered] = useState(false)
   
   useEffect(() => {
     const fetchLocation = async () => {
@@ -32,14 +34,14 @@ const Register = () => {
     };
     fetchLocation();
   }, []);
+
   interface FormData {
     Name: string;
     Email: string;
     Password: string;
-    PhoneNumber: string;
-    LadderCode: string;
   }
 
+  const [fData, setfData] = useState({ Name: '', Email: '', Password: ''})
 
   if (!loading && isLoggedIn) {
     return <Redirect href="/" />;
@@ -48,10 +50,6 @@ const Register = () => {
   const serverValidation = async (data: FormData, errors: any) => {
     console.log('Running Sever side Validations')
     try{
-      if(!await doesLadderCodeExist(data.LadderCode)) {
-        setError('LadderCode', {message: 'Ladder Code does not exist'});
-        return false;
-      }
       if(await doesEmailExist(data.Email)) {
         setError('Email', {message: 'Email already exists'});
         return false;
@@ -63,7 +61,30 @@ const Register = () => {
     }
   }
 
-  const handleRegister = async (data: FormData) => {
+  const handleRegisterOne = async() => {
+    setisEmailSignUp(true)
+
+  }
+
+  const handleRegisterTwo = async(data: FormData) => {
+    console.log('yep');
+    try {
+      if(!await serverValidation(data, errors)) {
+        return;
+      }
+      setisEmailEntered(true);
+      setfData({Name: data.Name, Email: data.Email, Password: fData.Password})
+    }
+    catch (error) {
+      console.error('Registration error:', error);
+      Alert.alert('Error', 'Registration failed. Please try again.');
+    }
+
+  }
+
+  {/* 3rd Click */}
+  const handleRegisterThree = async (data: FormData) => {
+    
     if (isLoading) return;
     console.log('Register attempt with:', data);
     
@@ -78,11 +99,13 @@ const Register = () => {
         Alert.alert('Error', 'Location data not available. Please try again.');
         return;
       }
-      const result = await registerUser(data.Email, data.Password, data.Name, data.LadderCode, data.PhoneNumber, location.City, location.County, location.State, location.Country, location.DeviceType);
+      console.log("fData = " + fData)
+      const result = await registerUser(fData.Email, data.Password, fData.Name, location.City, location.County, location.State, location.Country, location.DeviceType);
       if(result == null){
-        setLeagueCode('Invalid League Code. Please try again.');
+        console.log('Unable to register User, Please try again.');
         return;
       }
+      
       setLeagueCode('');
       Alert.alert('Success', 'Registration successful! Please login.');
       router.push('/sign-in');
@@ -94,14 +117,6 @@ const Register = () => {
     }
   };
 
-  function handleInputValue(phoneNumber: string) {
-    setPhone(phoneNumber);
-  }
-
-  function handleSelectedCountry(country: any) {
-    setSelectedCountry(country);
-  }
-
   return (
     <View style={styles.container}>
       <StatusBar hidden={true} />
@@ -111,8 +126,7 @@ const Register = () => {
 
         {/* App Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.appTitle}>Rally Rank</Text>
-          <Text style={styles.tagline} numberOfLines={1}>Your game, your rank, your rally.</Text>
+          <Text style={styles.appTitle}>Join Rally Rank</Text>
         </View>
 
         {/* Tennis Ball Image */}
@@ -132,20 +146,23 @@ const Register = () => {
 
         {/* Form Container */}
         <View style={styles.formContainer} >
-          <BlurView intensity={30} style={styles.blurContainer}>
-            
-            {/* Welcome Text */}
-            <Text style={styles.welcomeTitle}>Welcome!</Text>
-            <Text style={styles.welcomeSubtitle}>
-              Create your account to join the tennis ladder community.
-            </Text>
-            <Text style={styles.welcomeSubtitle}>
-              If you'd like to test the app, please email me at <Link target="_blank" href="mailto:eric@rally-rank.com">eric@rally-rank.com</Link>
-            </Text>
+          <BlurView intensity={30} style={styles.blurContainer}> 
+            {!isEmailSignUp && !isEmailEntered && (
+            <View style={{ marginTop: 40 }}>   
+              {/* Welcome Text */}
+              <Text style={styles.welcomeTitle}>Welcome!</Text>
+              <Text style={styles.welcomeSubtitle}>
+                If you'd like to test the app, please email me at
+              </Text>
+              <Link href="mailto:eric@rally-rank.com">
+                <Text style={styles.signInLinkText}>eric@rally-rank.com</Text>
+              </Link>
+            </View>
+             )}
 
-            <ScrollView style={styles.formScrollView} showsVerticalScrollIndicator={false}>
-              {/* Full Name */}
-              <View style={styles.inputGroup}>
+            {/* Email */}
+              {isEmailSignUp && !isEmailEntered && (
+                <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Full Name</Text>
                 <Controller
                   control={control}
@@ -172,10 +189,6 @@ const Register = () => {
                 {errors.Name && (
                   <Text style={styles.errorText}>{errors.Name.message}</Text>
                 )}
-              </View>
-
-              {/* Email */}
-              <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Email</Text>
                 <Controller
                   control={control}
@@ -205,112 +218,79 @@ const Register = () => {
                 {errors.Email && (
                   <Text style={styles.errorText}>{errors.Email.message}</Text>
                 )}
-              </View>
+
+                 {/* Register Button Two - Already selected Sign Up With Email*/}
+                  <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleSubmit(handleRegisterTwo)}
+                    disabled={isLoading}
+                    >
+                    <Text style={styles.submitButtonText}>
+                        {isLoading ? 'Registering...' : 'Sign Up With Email'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
 
               {/* Password */}
-              <View style={styles.inputGroup}>
+              {isEmailEntered && <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Password</Text>
-                <Controller
-                  control={control}
-                  name="Password"
-                  rules={{
-                    required: 'Password is Required',
-                    minLength: {
-                      value: 8,
-                      message: 'Password must be at least 8 characters'
-                    }
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      textContentType="password"
-                      style={styles.input}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      placeholder=""
-                      placeholderTextColor="rgba(255,255,255,0.4)"
-                      secureTextEntry
-                    />
-                  )}
-                />
-                <View style={styles.inputUnderline} />
-                {errors.Password && (
-                  <Text style={styles.errorText}>{errors.Password.message}</Text>
-                )}
-              </View>
-
-              {/* Phone Number */}
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Phone Number</Text>
-                <Controller
-                  name="PhoneNumber"
-                  control={control}
-                  rules={{ required: 'Phone number is required' }}
-                  render={({ field: { onChange, value } }) => (
-                    <View style={styles.phoneInputContainer}>
-                      <PhoneInput
-                        defaultCountry="US"
-                        value={value}
-                        onChangePhoneNumber={onChange}
-                        selectedCountry={selectedCountry}
-                        onChangeSelectedCountry={setSelectedCountry}
-                        visibleCountries={['US', 'AU']}
-                        phoneInputStyles={{
-                          container: styles.phoneContainer,
-                          input: styles.phoneInput,
-                        }}
+                  <Controller
+                      control={control}
+                      name="Password"
+                      rules={{
+                      required: 'Password is Required',
+                      minLength: {
+                          value: 8,
+                          message: 'Password must be at least 8 characters'
+                      }
+                      }}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                          textContentType="password"
+                          style={styles.input}
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          value={value}
+                          placeholder=""
+                          placeholderTextColor="rgba(255,255,255,0.4)"
+                          secureTextEntry
                       />
-                    </View>
+                      )}
+                  />
+                  <View style={styles.inputUnderline} />
+                  {errors.Password && (
+                      <Text style={styles.errorText}>{errors.Password.message}</Text>
                   )}
-                />
-                <View style={styles.inputUnderline} />
-                {errors.PhoneNumber && (
-                  <Text style={styles.errorText}>{errors.PhoneNumber.message}</Text>
-                )}
-              </View>
+                  <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleSubmit(handleRegisterThree)}
+                    disabled={isLoading}
+                    >
+                    <Text style={styles.submitButtonText}>
+                        {isLoading ? 'Registering...' : 'Sign Up With Email'}
+                    </Text>
+                  </TouchableOpacity>
+              </View>}
+              
+              {/* Buttons Container */}
+              {!isEmailSignUp && (
+                <View style={styles.buttonsContainer}>
+                  <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleSubmit(handleRegisterOne)}
+                    disabled={isLoading}
+                  >
+                    <Text style={styles.submitButtonText}>
+                      {isLoading ? 'Registering...' : 'Sign Up With Email'}
+                    </Text>
+                  </TouchableOpacity>
 
-              {/* Ladder Code */}
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Ladder Code (For Inviting Members)</Text>
-                <Controller
-                  control={control}
-                  name="LadderCode"
-                  rules={{
-                    required: 'Ladder Code is Required',
-                    minLength: {
-                      value: 4,
-                      message: 'Ladder Code must be 4 characters long'
-                    }
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      style={styles.input}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      placeholder=""
-                      placeholderTextColor="rgba(255,255,255,0.4)"
-                      maxLength={4}
-                      autoCapitalize="characters"
-                    />
-                  )}
-                />
-                <View style={styles.inputUnderline} />
-                {errors.LadderCode && (
-                  <Text style={styles.errorText}>{errors.LadderCode.message}</Text>
-                )}
-              </View>
-
-              {/* Submit Button */}
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleSubmit(handleRegister)}
-                disabled={isLoading}
-              >
-                <Text style={styles.submitButtonText}>
-                  {isLoading ? 'Registering...' : 'Register'}
-                </Text>
-              </TouchableOpacity>
+                  {/* External Login Buttons */}
+                  <ExternalButtons signup={true} city={location?.City} county={location?.County} state={location?.State} country={location?.Country} deviceType={location?.DeviceType} />
+                </View>
+              )}
+              
 
               {/* Sign In Link */}
               <TouchableOpacity onPress={() => router.push('/sign-in')} style={styles.signInContainer}>
@@ -319,8 +299,6 @@ const Register = () => {
                   <Text style={styles.signInLinkText}> Click here to sign in</Text>
                 </Text>
               </TouchableOpacity>
-            </ScrollView>
-
           </BlurView>
         </View>
       </View>
@@ -458,25 +436,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Rubik',
   },
   submitButton: {
-    width: 161,
-    height: 40,
+    width: 250,
+    height: 50,
     backgroundColor: '#FFF',
-    borderRadius: 30,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-    marginTop: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
+    marginTop: 12,
   },
   submitButtonText: {
     color: '#316536',
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     fontFamily: 'Rubik',
-    textAlignVertical: 'center',
+  },
+  buttonsContainer: {
+    alignItems: 'center',
+    marginTop: 20,
   },
   signInContainer: {
     alignItems: 'center',

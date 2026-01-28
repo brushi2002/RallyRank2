@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Button, ScrollView, TouchableOpacity, Linking, Image, Text } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useGlobalContext } from '../../../lib/global-provider';
 import { ThemedText } from '../../../components/ThemedText';
-import { ThemedView } from '../../../components/ThemedView';
 import { IconSymbol, IconSymbolName } from '../../../components/ui/IconSymbol';
-import { Models } from 'react-native-appwrite';
-import { account } from '../../../lib/appwrite';
-import { router } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect } from '@react-navigation/native';
+//import * as ImagePicker from 'expo-image-picker';
 import ProfileComponent from '../../../components/Profile';
 
 

@@ -1,5 +1,6 @@
 import { useGlobalContext } from '@/lib/globalprovider';
 import { useFocusEffect } from '@react-navigation/native';
+import { Redirect } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Models } from 'react-native-appwrite';
@@ -23,6 +24,12 @@ interface MatchResult extends Models.Document {
 const Categories = ["My Matches"];
 
 export default function HomeScreen() {
+  const { user } = useGlobalContext();
+
+  if (!user?.isLeagueMember) {
+    return <Redirect href="/(drawer)/(tabs)/NoLeague" />;
+  }
+
   return (
       <HomeScreenContent />
   );

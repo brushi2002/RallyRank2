@@ -1,6 +1,6 @@
-import GeoCoder from "react-native-geocoding";
+import * as Location from 'expo-location';
 import { Platform } from "react-native";
-import * as Location from 'expo-location'
+import GeoCoder from "react-native-geocoding";
 console.log('EXPO_PUBLIC_GOOGLE_API_KEY:', process.env.EXPO_PUBLIC_GOOGLE_API_KEY);
 GeoCoder.init(process.env.EXPO_PUBLIC_GOOGLE_API_KEY || ''); 
 
@@ -24,8 +24,9 @@ interface LocationData {
         console.log('Device Type:', lData.DeviceType);
       
         let { status } = await Location.requestForegroundPermissionsAsync();
+        console.log(status)
         if (status !== 'granted') {
-            console.error('Permission to access location was denied');
+            console.log('Permission to access location was denied');
             return lData;
         }
 

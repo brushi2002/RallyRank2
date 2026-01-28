@@ -1,3 +1,5 @@
+import { makeRedirectUri } from 'expo-auth-session';
+import * as WebBrowser from "expo-web-browser";
 import { Alert } from "react-native";
 import {
   Account,
@@ -5,10 +7,15 @@ import {
   Client,
   Databases,
   ID,
+  OAuthProvider,
   Query,
   Storage,
   TablesDB
 } from "react-native-appwrite";
+
+export interface UserLocationData{
+
+}
   
   // Environment variables will be checked when actually used
   // This allows the app to start even if env vars are not set
@@ -44,7 +51,7 @@ import {
   export const tablesdb = new TablesDB(client);
   export const storage = new Storage(client);
 
-  export async function registerUser(email: string, password: string, name: string, leagueCode: string, phoneNumber: string, city: string, county: string, state: string, country: string, deviceType: string) {
+ /* export async function registerUser(email: string, password: string, name: string, leagueCode: string, phoneNumber: string, city: string, county: string, state: string, country: string, deviceType: string) {
     try{
       validateAppwriteConfig();
 
@@ -106,6 +113,65 @@ import {
     }
     catch(error){
       console.log(error);
+    }
+  }*/
+
+    export async function createUserInDB(Name: string, email: string, city: string, county: string, state: string, country: string, deviceType: string)
+    {
+       try{
+          //Create the player document
+        const result = await tablesdb.upsertRow({
+          databaseId: config.databaseId!,
+          tableId: config.playerCollectionId!,
+          rowId: ID.unique(),
+          data: {
+            name: Name,
+            email: email,
+            City: city,
+            County: county,
+            State: state,
+            Country: country,
+            DeviceType: deviceType,
+          }
+        });
+        const playerId = result.$id
+
+        return playerId
+       }
+       catch(error) {
+        console.log("Error in appwrite.createUserInDB " + error)
+
+       }
+
+    }
+
+  export async function registerUser(email: string, password: string, Name: string, city: string, county: string, state: string, country: string, deviceType: string) {
+    try{
+      validateAppwriteConfig();
+
+      const account = new Account(client);
+
+      console.log('verifying')
+      verifyEmail(email);
+
+      console.log('creating account');
+
+      const promise2 = account.create({userId:  ID.unique(), email: email, password: password});
+      
+      //const promise2 = await account.createVerification('https://example.com/verify');
+
+      if((await promise2).$id){
+        createUserInDB(Name,email,city,county,state,country,deviceType)
+      }
+
+      
+      //Create the player document
+      const playerId = createUserInDB(Name, email, city, county, state, country, deviceType)
+      return playerId
+
+    }
+    catch(error){
+      console.log("Error in registerUser " + error);
     }
   }
 
@@ -207,38 +273,72 @@ export const deleteSessions = async () => {
     return result.rows.length > 0;
   }
   
-  //export async function login() {
-  //  try {
-  //    const redirectUri = Linking.createURL("/");
+  export async function loginwithOauth(provider: string, city: string, county: string, state: string, country: string, deviceType: string) {
+
+      try{
+
+          const pr = provider === "Apple" ? OAuthProvider.Apple : OAuthProvider.Google;
+
+          const session = await checkActiveSession();
+
+          if(session){
+            await deleteSessions();
+          }
+
+          const deepLink = new URL(makeRedirectUri({ preferLocalhost: true }));
+          const scheme = `${deepLink.protocol}//`; // e.g. 'exp://' or 'appwrite-callback-<PROJECT_ID>://'
+          console.log("deepLink = " + deepLink)
+          console.log("scheme = " + scheme)
+
+        console.log("provider = " + pr)
+
+        const loginUrl = account.createOAuth2Token({
+            provider: pr,
+            success: `${deepLink}/(drawer)/(tabs)/`,
+            failure: `${deepLink}`,
+            scopes: ['name', 'email']
+        }  )
+
+      console.log("loginUrl = " + loginUrl)
+
+      const result = await WebBrowser.openAuthSessionAsync(`${loginUrl}`,  scheme);
+    
+
+      console.log(result.type)
+
+      if (result.type === 'success') {
+        //const successResult = result as WebBrowser.WebBrowserRedirectResult;
+        const url = new URL(result.url);
+        console.log(url);
+        const secret = url.searchParams.get('secret');
+        const userId = url.searchParams.get('userId');
+
+        if (userId && secret) {
+      
+          const account = new Account(client);
+          await account.createSession({ userId: userId!, secret: secret! });
+
+          let session = await account.getSession({sessionId: 'current'});
+          let user=await account.get()
+
+          console.log('email = ' + user.email)
+          console.log('name = ' + user.name)
+
+          if(session)
+          {
+            const playerId = createUserInDB(user.name, user.email, city, county, state, country, deviceType)
+            return playerId
+          }
+
+          return false;
+        }
+      }
+    }
+    catch(error){
+        console.error("Error in login with Oauth " + error);
+    }
+  }
   
- //     const response = await account.createOAuth2Token({
- //       OAuthProvider.Google,
- //       redirectUri
- //     }
- //     );
- //     if (!response) throw new Error("Create OAuth2 token failed");
-  
- //     const browserResult = await openAuthSessionAsync(
- //       response.toString(),
- //       redirectUri
- //     );
- //     if (browserResult.type !== "success")
- //       throw new Error("Create OAuth2 token failed");
-  
- //     const url = new URL(browserResult.url);
- //     const secret = url.searchParams.get("secret")?.toString();
-  //    const userId = url.searchParams.get("userId")?.toString();
-   //   if (!secret || !userId) throw new Error("Create OAuth2 token failed");
-  
- //     const session = await account.createSession(userId, secret);
- //     if (!session) throw new Error("Failed to create session");
-  
-//      return true;
-//    } catch (error) {
-//      console.error(error);
-//      return false;
- //   }
- // }
   
   export async function logout() {
     try {
@@ -266,6 +366,7 @@ export const deleteSessions = async () => {
         if(!leagueMembership.rows[0]){
           return {
             ...userResult.rows[0],
+            isLeagueMember: false,
             labels: result.labels,
             emailVerified: result.emailVerification,
             leagueinfo: {
@@ -278,6 +379,7 @@ export const deleteSessions = async () => {
         }
         return {
           ...userResult.rows[0],
+          isLeagueMember: true,
           labels: result.labels,
           emailVerified: result.emailVerification,
           leagueinfo: leagueMembership.rows[0]

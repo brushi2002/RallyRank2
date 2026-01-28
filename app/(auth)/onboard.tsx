@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import * as React from 'react';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import OnboardingFlow from '../../components/OnBoardingFlow';
@@ -10,7 +9,7 @@ const SignIn = () => {
     const [showOnboarding, setShowOnboarding] = useState(true);
     //handle SignUp
     const handleSignUp = () => {
-        router.push('/(auth)/register');
+        router.push('/(auth)/sign-up');
 
     }
     const handleSignIn = () => {

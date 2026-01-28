@@ -5,12 +5,15 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rallyrank",
+    "scheme": "appwrite-callback-67df0861002d50a5d086",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tennisapp.app",
+      "associatedDomains": [
+        "applinks:rallyrankemailpwverify.appwrite.network"
+      ],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -42,7 +45,9 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin",
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true,

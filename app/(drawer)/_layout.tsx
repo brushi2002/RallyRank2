@@ -2,7 +2,7 @@ import { account, getCurrentUser, verifyEmail } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/globalprovider";
 import { Redirect, router } from "expo-router";
 import { Drawer } from 'expo-router/drawer';
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ActivityIndicator, Button, Text, View } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,7 +44,7 @@ const Layout =()=>{
 
     const handleLogout = async () => {
         try {
-          await account.deleteSession('current');
+          await account.deleteSession({sessionId: 'current'});
           refetch();
           router.replace('../(auth)/sign-in');
         } catch (error) {
@@ -61,7 +61,7 @@ const Layout =()=>{
     }
 
     if(!isLoggedIn) {
-        return <Redirect href="../(auth)/sign-in2" />
+        return <Redirect href="../(auth)/onboard" />
     }
     else if(isLoggedIn && !user?.emailVerified) {
         if(user?.email){

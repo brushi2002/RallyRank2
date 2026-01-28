@@ -1,11 +1,12 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Image, Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useGlobalContext } from "@/lib/globalprovider";
+import { Tabs } from 'expo-router';
+import { Image, Platform } from 'react-native';
 import TabBarBackground from '../../../components/ui/TabBarBackground';
 import { Colors } from '../../../constants/Colors';
+
+
 
 const MatchFeedIcon = ({ focused, color }: { focused: boolean, color: string }) => {
   if (focused) {
@@ -84,6 +85,16 @@ const EnterScoreIcon = ({ focused, color }: { focused: boolean, color: string })
 };
 
 export default function TabLayout() {
+  const {loading, isLoggedIn, user, refetch} = useGlobalContext();
+
+  console.log("UserInfo in _layout.tsx.TabLayout : " , user)
+  let isLeagueMember = false;
+  if(user?.isLeagueMember){
+    isLeagueMember = true;
+  }
+
+  console.log("isLeagueMember = ", isLeagueMember)
+
   const colorScheme = useColorScheme();
 
   return (
@@ -95,11 +106,9 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
           android: {
-            // Ensure the tab bar is visible and properly positioned on Android
             position: 'relative',
             elevation: 8,
             backgroundColor: Colors[colorScheme ?? 'light'].background,
@@ -115,6 +124,7 @@ export default function TabLayout() {
           title: 'Match Feed',
           tabBarIcon: ({ color, focused }) => <MatchFeedIcon focused={focused} color={color} />,
           headerShown: false,
+          href: isLeagueMember ? undefined : null,
         }}
       />
       <Tabs.Screen
@@ -123,6 +133,7 @@ export default function TabLayout() {
           title: 'Ladder Standings',
           tabBarIcon: ({ color, focused }) => <LadderStandingIcon focused={focused} color={color} />,
           headerShown: false,
+          href: isLeagueMember ? undefined : null,
         }}
       />
       <Tabs.Screen
@@ -131,6 +142,16 @@ export default function TabLayout() {
           title: 'Enter Score',
           tabBarIcon: ({ color, focused }) => <EnterScoreIcon focused={focused} color={color} />,
           headerShown: false,
+          href: isLeagueMember ? undefined : null,
+        }}
+      />
+      <Tabs.Screen
+        name="NoLeague"
+        options={{
+          title: 'Not a League Member',
+          tabBarIcon: ({ color, focused }) => <ProfileIcon focused={focused} color={color} />,
+          headerShown: false,
+          href: isLeagueMember ? null : undefined,
         }}
       />
       <Tabs.Screen
@@ -142,6 +163,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-    
   );
 }
