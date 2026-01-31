@@ -2,7 +2,7 @@
   "expo": {
     "name": "RallyRank",
     "slug": "RallyRank",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "appwrite-callback-67df0861002d50a5d086",
@@ -11,6 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tennisapp.app",
+      "usesAppleSignIn": true,
       "associatedDomains": [
         "applinks:rallyrankemailpwverify.appwrite.network"
       ],
@@ -26,7 +27,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.tennisapp.app"
     },
     "web": {
       "output": "static",
@@ -34,10 +36,11 @@
     },
     "plugins": [
       "expo-router",
+      "expo-apple-authentication",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/adaptive-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

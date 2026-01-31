@@ -1,10 +1,10 @@
 import { useGlobalContext } from '@/lib/globalprovider';
 import { BlurView } from 'expo-blur';
-import { Link, Redirect, router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ExternalButtons } from '../../components/auth/ExternalButtons';
 import { doesEmailExist, registerUser } from '../../lib/appwrite';
 import { LocationData, getLocationData } from '../../lib/geolocationApi';
@@ -126,7 +126,7 @@ const Register = () => {
 
         {/* App Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.appTitle}>Join Rally Rank</Text>
+          <Text style={styles.appTitle} allowFontScaling={false}>Join Rally Rank</Text>
         </View>
 
         {/* Tennis Ball Image */}
@@ -145,18 +145,16 @@ const Register = () => {
         />
 
         {/* Form Container */}
-        <View style={styles.formContainer} >
+        <View style={styles.formContainer}>
           <BlurView intensity={30} style={styles.blurContainer}> 
             {!isEmailSignUp && !isEmailEntered && (
             <View style={{ marginTop: 40 }}>   
               {/* Welcome Text */}
-              <Text style={styles.welcomeTitle}>Welcome!</Text>
-              <Text style={styles.welcomeSubtitle}>
-                If you'd like to test the app, please email me at
+              <Text style={styles.welcomeTitle} allowFontScaling={false} >Welcome!</Text>
+              <Text style={styles.welcomeSubtitle} allowFontScaling={false}>
+                If you'd like to test the app, please email me at{' '}
+                <Text style={styles.signInLinkText} onPress={() => Linking.openURL('mailto:eric@rally-rank.com')} allowFontScaling={false}>eric@rally-rank.com</Text>
               </Text>
-              <Link href="mailto:eric@rally-rank.com">
-                <Text style={styles.signInLinkText}>eric@rally-rank.com</Text>
-              </Link>
             </View>
              )}
 
@@ -225,7 +223,7 @@ const Register = () => {
                     onPress={handleSubmit(handleRegisterTwo)}
                     disabled={isLoading}
                     >
-                    <Text style={styles.submitButtonText}>
+                    <Text style={styles.submitButtonText} allowFontScaling={false}>
                         {isLoading ? 'Registering...' : 'Sign Up With Email'}
                     </Text>
                   </TouchableOpacity>
@@ -267,7 +265,7 @@ const Register = () => {
                     onPress={handleSubmit(handleRegisterThree)}
                     disabled={isLoading}
                     >
-                    <Text style={styles.submitButtonText}>
+                    <Text style={styles.submitButtonText} allowFontScaling={false}>
                         {isLoading ? 'Registering...' : 'Sign Up With Email'}
                     </Text>
                   </TouchableOpacity>
@@ -281,7 +279,7 @@ const Register = () => {
                     onPress={handleSubmit(handleRegisterOne)}
                     disabled={isLoading}
                   >
-                    <Text style={styles.submitButtonText}>
+                    <Text style={styles.submitButtonText} allowFontScaling={false}>
                       {isLoading ? 'Registering...' : 'Sign Up With Email'}
                     </Text>
                   </TouchableOpacity>
@@ -294,9 +292,9 @@ const Register = () => {
 
               {/* Sign In Link */}
               <TouchableOpacity onPress={() => router.push('/sign-in')} style={styles.signInContainer}>
-                <Text style={styles.signInText}>
+                <Text style={styles.signInText} allowFontScaling={false}>
                   Already have an account? 
-                  <Text style={styles.signInLinkText}> Click here to sign in</Text>
+                  <Text style={styles.signInLinkText} allowFontScaling={false}> Click here to sign in</Text>
                 </Text>
               </TouchableOpacity>
           </BlurView>
@@ -374,14 +372,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
   },
   welcomeTitle: {
-    fontSize: 16,
+    fontSize: 26,
     fontWeight: '400',
     color: '#FFF',
     fontFamily: 'Rubik',
     marginBottom: 8,
   },
   welcomeSubtitle: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '400',
     color: '#FFF',
     fontFamily: 'Rubik',
@@ -442,6 +440,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -450,7 +449,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   submitButtonText: {
-    color: '#316536',
+    color: '#000',
     fontSize: 16,
     fontWeight: '500',
     fontFamily: 'Rubik',
@@ -465,12 +464,13 @@ const styles = StyleSheet.create({
   },
   signInText: {
     color: '#FFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '400',
     fontFamily: 'Rubik',
     textAlign: 'center',
   },
   signInLinkText: {
+    fontSize: 10,
     color: '#EFEEBC',
     textDecorationLine: 'underline',
   },

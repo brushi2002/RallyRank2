@@ -3,6 +3,7 @@ import { Slot } from 'expo-router';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../global.css';
 
 
@@ -11,8 +12,10 @@ import '../global.css';
 
 export default function RootLayout() {
   return (
-    <GlobalProvider>
-        <Slot />
-    </GlobalProvider>
+    <SafeAreaProvider>
+      <GlobalProvider>
+          <Slot />
+      </GlobalProvider>
+    </SafeAreaProvider>
   );
 }

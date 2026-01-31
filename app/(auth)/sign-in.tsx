@@ -71,8 +71,8 @@ const SignIn = () => {
 
         {/* App Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.appTitle}>Rally Rank</Text>
-          <Text style={styles.tagline} numberOfLines={1}>Your game, your rank, your rally.</Text>
+          <Text style={styles.appTitle} allowFontScaling={false}>Rally Rank</Text>
+          <Text style={styles.tagline} numberOfLines={1} allowFontScaling={false}>Your game, your rank, your rally.</Text>
         </View>
 
         {/* Tennis Ball Image */}
@@ -95,8 +95,8 @@ const SignIn = () => {
           <BlurView intensity={30} style={styles.blurContainer}>
             
             {/* Welcome Text */}
-            <Text style={styles.welcomeTitle}>Welcome Back!</Text>
-            <Text style={styles.welcomeSubtitle}>
+            <Text style={styles.welcomeTitle} allowFontScaling={false}>Welcome Back!</Text>
+            <Text style={styles.welcomeSubtitle} allowFontScaling={false}>
               Please login to view your Ladder or Enter Scores.
             </Text>
 
@@ -104,7 +104,7 @@ const SignIn = () => {
 
               {/* Email */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>E-mail</Text>
+                <Text style={styles.inputLabel} allowFontScaling={false}>E-mail</Text>
                 <Controller
                   control={control}
                   name="Email"
@@ -131,13 +131,13 @@ const SignIn = () => {
                 />
                 <View style={styles.inputUnderline} />
                 {errors.Email && (
-                  <Text style={styles.errorText}>{errors.Email.message}</Text>
+                  <Text style={styles.errorText} allowFontScaling={false}>{errors.Email.message}</Text>
                 )}
               </View>
 
               {/* Password */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Password</Text>
+                <Text style={styles.inputLabel} allowFontScaling={false}>Password</Text>
                 <Controller
                   control={control}
                   name="Password"
@@ -163,7 +163,7 @@ const SignIn = () => {
                 />
                 <View style={styles.inputUnderline} />
                 {errors.Password && (
-                  <Text style={styles.errorText}>{errors.Password.message}</Text>
+                  <Text style={styles.errorText} allowFontScaling={false}>{errors.Password.message}</Text>
                 )}
               </View>
 
@@ -174,7 +174,7 @@ const SignIn = () => {
                   onPress={handleSubmit(handleLogin)}
                   disabled={isLoading}
                 >
-                  <Text style={styles.submitButtonText}>
+                  <Text style={styles.submitButtonText} allowFontScaling={false}>
                     {isLoading ? 'Submitting...' : 'Sign In With Email'}
                   </Text>
                 </TouchableOpacity>
@@ -184,27 +184,27 @@ const SignIn = () => {
               </View>
 
               {/* Sign In Link */}
-                <Text style={styles.signInText}>
+                <Text style={styles.signInText} allowFontScaling={false}>
                   Don't have an account? </Text>
                   <TouchableOpacity onPress={() => router.push('/sign-up')} style={styles.signInContainer}>
-                    <Text style={styles.signInLinkText}> Click here to Register</Text>
+                    <Text style={styles.signInLinkText} allowFontScaling={false}> Click here to Register</Text>
                   </TouchableOpacity>
 
 
 
             {/* Sign In Link */}
-              <Text style={[styles.signInText, { marginTop: 15 }]}>If you would like to register and create a Ladder for your friends to join. </Text>
+              <Text style={[styles.signInText, { marginTop: 15 }]} allowFontScaling={false}>If you would like to register and create a Ladder for your friends to join. </Text>
               <TouchableOpacity onPress={() => router.push('/CreateLadder')} style={styles.signInContainer}>
-                  <Text style={styles.signInLinkText}> Click Here to Register and Create a Ladder.</Text>
+                  <Text style={styles.signInLinkText} allowFontScaling={false}> Click Here to Register and Create a Ladder.</Text>
               </TouchableOpacity>
 
                 
 
-                <Text style={[styles.signInText, { marginTop: 20 }]}>
+                <Text style={[styles.signInText, { marginTop: 20 }]} allowFontScaling={false}>
                   If you are interested in testing, please send me an email
                 </Text>
                 <Link href="mailto:eric@rally-rank.com">
-                  <Text style={styles.signInLinkText}>eric@rally-rank.com</Text>
+                  <Text style={styles.signInLinkText} allowFontScaling={false}>eric@rally-rank.com</Text>
                 </Link>
             </ScrollView>
 

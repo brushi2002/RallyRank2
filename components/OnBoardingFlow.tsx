@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -68,7 +68,7 @@ const OnboardingFlow = () => {
           {onboardingData.map((item, index) => (
             <View key={index} style={[{ width: width, height: 874, backgroundColor: item.backgroundColor }, { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 4, overflow: 'hidden' }]}>
               <View style={{ width: 288, position: 'absolute', left: 63, top: 75, alignItems: 'center', zIndex: 10 }}>
-                <Text style={{ color: 'white', fontSize: 30, textAlign: 'center', fontFamily: 'Rubik' }}>
+                <Text style={{ color: 'white', fontSize: 30, textAlign: 'center', fontFamily: 'Rubik' }} allowFontScaling={false}>
                     Welcome to{'\n'}Rally Rank
                 </Text>
               </View>

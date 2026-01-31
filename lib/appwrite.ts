@@ -285,8 +285,13 @@ export const deleteSessions = async () => {
             await deleteSessions();
           }
 
-          const deepLink = new URL(makeRedirectUri({ preferLocalhost: true }));
-          const scheme = `${deepLink.protocol}//`; // e.g. 'exp://' or 'appwrite-callback-<PROJECT_ID>://'
+          // Use native scheme for standalone builds, localhost for development
+          const redirectUri = makeRedirectUri({
+            scheme: 'appwrite-callback-67df0861002d50a5d086',
+            preferLocalhost: __DEV__,
+          });
+          const deepLink = new URL(redirectUri);
+          const scheme = `${deepLink.protocol}//`;
           console.log("deepLink = " + deepLink)
           console.log("scheme = " + scheme)
 
@@ -301,10 +306,17 @@ export const deleteSessions = async () => {
 
       console.log("loginUrl = " + loginUrl)
 
-      const result = await WebBrowser.openAuthSessionAsync(`${loginUrl}`,  scheme);
-    
+      console.log("Opening auth session with URL:", loginUrl);
+      console.log("Using scheme:", scheme);
 
-      console.log(result.type)
+      const result = await WebBrowser.openAuthSessionAsync(`${loginUrl}`, scheme);
+
+      console.log("Auth session result:", JSON.stringify(result))
+
+      if (result.type === 'cancel' || result.type === 'dismiss') {
+        console.log("User cancelled auth session");
+        return false;
+      }
 
       if (result.type === 'success') {
         //const successResult = result as WebBrowser.WebBrowserRedirectResult;
@@ -334,8 +346,14 @@ export const deleteSessions = async () => {
         }
       }
     }
-    catch(error){
-        console.error("Error in login with Oauth " + error);
+    catch(error: any){
+        console.error("Error in login with Oauth:", error);
+        Alert.alert(
+          'Sign In Error',
+          `${error?.message || 'An error occurred during sign in. Please try again.'}`,
+          [{ text: 'OK' }]
+        );
+        return false;
     }
   }
   

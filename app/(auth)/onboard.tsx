@@ -28,7 +28,7 @@ const SignIn = () => {
                     onPress={handleSignUp}
                     disabled={isLoading}
                     > 
-                        <Text style={styles.submitButtonText}>
+                        <Text style={styles.submitButtonText} allowFontScaling={false}>
                         {isLoading ? 'Submitting...' : 'Sign up'}
                         </Text>
                     </TouchableOpacity>
@@ -39,7 +39,7 @@ const SignIn = () => {
                         onPress={handleSignIn}
                         disabled={isLoading}
                     > 
-                        <Text style={styles.submitButtonText}>
+                        <Text style={styles.submitButtonText}allowFontScaling={false}>
                             {isLoading ? 'Submitting...' : 'Sign in'}
                         </Text>
                     </TouchableOpacity>
