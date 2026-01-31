@@ -56,7 +56,7 @@ const Profile = (props: ProfileProps) => {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0'}}>
         <ActivityIndicator size="large" color="#0a7ea4" />
-        <Text style={{marginTop: 10}}>Loading profile...</Text>
+        <Text style={{marginTop: 10}} allowFontScaling={false}>Loading profile...</Text>
       </SafeAreaView>
     );
   }
@@ -65,7 +65,7 @@ const Profile = (props: ProfileProps) => {
     console.log("Profile: No user found");
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0'}}>
-        <Text style={{fontSize: 18, color: '#666'}}>Please sign in to view your profile</Text>
+        <Text style={{fontSize: 18, color: '#666'}} allowFontScaling={false}>Please sign in to view your profile</Text>
       </SafeAreaView>
     );
   }
@@ -115,75 +115,79 @@ const Profile = (props: ProfileProps) => {
             </View>
           </View>
           
-          <Text style={styles.headerTitle}>{userInfo.name}</Text>
+          <Text style={styles.headerTitle} allowFontScaling={false}>{userInfo.name}</Text>
           
           {/* Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{totalMatches}</Text>
-              <Text style={styles.statLabel}>Matches</Text>
+              <Text style={styles.statNumber} allowFontScaling={false}>{totalMatches}</Text>
+              <Text style={styles.statLabel} allowFontScaling={false}>Matches</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userInfo.wins}</Text>
-              <Text style={styles.statLabel}>Wins</Text>
+              <Text style={styles.statNumber} allowFontScaling={false}>{userInfo.wins}</Text>
+              <Text style={styles.statLabel} allowFontScaling={false}>Wins</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{winRate}%</Text>
-              <Text style={styles.statLabel}>Win Rate</Text>
+              <Text style={styles.statNumber} allowFontScaling={false}>{winRate}%</Text>
+              <Text style={styles.statLabel} allowFontScaling={false}>Win Rate</Text>
             </View>
           </View>
         </View>
 
         {/* Current League Ranking */}
         <View style={styles.rankingSection}>
-          <Text style={styles.rankingNumber}>{userInfo.rank}</Text>
-          <Text style={styles.rankingLabel}>Current League Ranking</Text>
+          <Text style={styles.rankingNumber} allowFontScaling={false}>{userInfo.rank}</Text>
+          <Text style={styles.rankingLabel} allowFontScaling={false}>Current League Ranking</Text>
         </View>
 
         {/* General Information */}
         <View style={styles.infoSection}>
-          <Text style={styles.sectionTitle}>GENERAL INFORMATION</Text>
+          <Text style={styles.sectionTitle} allowFontScaling={false}>GENERAL INFORMATION</Text>
           
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>NAME</Text>
+            <Text style={styles.inputLabel} allowFontScaling={false}>NAME</Text>
             <TextInput
               style={styles.textInput}
               value={userInfo.name}
               editable={props.edit}
               placeholder="Enter name"
+              allowFontScaling={false}
             />
             <View style={styles.inputUnderline} />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>EMAIL</Text>
+            <Text style={styles.inputLabel} allowFontScaling={false}>EMAIL</Text>
             <TextInput
               style={styles.textInput}
               value={userInfo.email}
               editable={props.edit}
               placeholder="Enter email"
+              allowFontScaling={false}
             />
             <View style={styles.inputUnderline} />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>LOCATION</Text>
+            <Text style={styles.inputLabel} allowFontScaling={false}>LOCATION</Text>
             <TextInput
               style={styles.textInput}
               value={`${userInfo.city}, ${userInfo.state}`}
               editable={props.edit}
               placeholder="Enter location"
+              allowFontScaling={false}
             />
             <View style={styles.inputUnderline} />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>MEMBER SINCE</Text>
+            <Text style={styles.inputLabel} allowFontScaling={false}>MEMBER SINCE</Text>
             <TextInput
               style={styles.textInput}
               value="2024" // You can calculate this from user creation date
               editable={false}
               placeholder="Member since"
+              allowFontScaling={false}
             />
             <View style={styles.inputUnderline} />
           </View>
@@ -191,25 +195,25 @@ const Profile = (props: ProfileProps) => {
           {!props.edit && (
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                <Text style={styles.logoutButtonText}>Logout</Text>
+                <Text style={styles.logoutButtonText} allowFontScaling={false}>Logout</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity style={styles.disableButton} onPress={handleDisableAccount}>
-                <Text style={styles.disableButtonText}>Disable Account</Text>
+                <Text style={styles.disableButtonText} allowFontScaling={false}>Disable Account</Text>
               </TouchableOpacity>
-              
+
               <View style={styles.linkContainer}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => Linking.openURL('https://www.rally-rank.com/terms-of-use')}
                   style={styles.linkButton}
                 >
-                  <Text style={styles.linkText}>Terms of Use</Text>
+                  <Text style={styles.linkText} allowFontScaling={false}>Terms of Use</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => Linking.openURL('https://www.rally-rank.com/privacy-policy')}
                   style={styles.linkButton}
                 >
-                  <Text style={styles.linkText}>Privacy Policy</Text>
+                  <Text style={styles.linkText} allowFontScaling={false}>Privacy Policy</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -222,10 +226,10 @@ const Profile = (props: ProfileProps) => {
     console.error("Profile component error:", error);
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0'}}>
-        <Text style={{fontSize: 18, color: '#666', textAlign: 'center', padding: 20}}>
+        <Text style={{fontSize: 18, color: '#666', textAlign: 'center', padding: 20}} allowFontScaling={false}>
           Error loading profile. Please try again.
         </Text>
-        <Text style={{fontSize: 14, color: '#999', textAlign: 'center'}}>
+        <Text style={{fontSize: 14, color: '#999', textAlign: 'center'}} allowFontScaling={false}>
           {error.toString()}
         </Text>
       </SafeAreaView>

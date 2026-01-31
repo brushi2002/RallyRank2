@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { styles as globalStyles } from '../../../constants/styles';
 
@@ -10,7 +11,10 @@ export default function NoLeague() {
       >
         <Text style={globalStyles.appTitle} allowFontScaling={false}>No League Yet</Text>
         <Text style={styles.message} allowFontScaling={false}>
-          You aren't currently a member of any Ladder or League. Please check back for additional functionality
+          You aren't currently a member of any Ladder.{' '}
+          <Text style={styles.linkText} onPress={() => router.push('/JoinLadder')} allowFontScaling={false}>
+            Please click here to Join a Ladder
+          </Text>
         </Text>
         <Text style={styles.smallMessage} allowFontScaling={false}>
           If you'd like to be involved in testing the app, please email me at:

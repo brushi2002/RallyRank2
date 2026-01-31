@@ -155,6 +155,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="JoinLadder"
+        options={{
+          title: 'Join Ladder',
+          tabBarIcon: ({ color, focused }) => <EnterScoreIcon focused={focused} color={color} />,
+          headerShown: false,
+          href: null, // Hidden from tab bar - accessed via link from NoLeague
+        }}
+      />
+      <Tabs.Screen
         name="Profile"
         options={{
           title: 'Profile',

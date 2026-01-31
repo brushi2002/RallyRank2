@@ -262,9 +262,37 @@ export const deleteSessions = async () => {
     }
   }
 
-  export async function doesLadderCodeExist(ladderCode: string) {
+  export async function getLadderIDforLadderCode(ladderCode: string) {
     const result = await tablesdb.listRows({databaseId: config.databaseId!, tableId: config.leagueCollectionId!, queries: [Query.equal('LadderCode', ladderCode)]});
-    return result.rows.length > 0;
+    if(result.rows.length > 0)
+      return result.rows[0].$id;
+    else
+      return '';
+  }
+
+   export async function addUsertoLadder(UserId: string, ladderId: string) {
+    try {
+      console.log('Calling Appwrite AddUsertoLadder')
+      
+      const result = await databases.createDocument(
+        config.databaseId!,
+        config.memberCollectionId!, 
+        ID.unique(),
+        {
+          league: ladderId,
+          player: UserId,
+          rank: 0,
+          rating_value: 1400,
+        }
+      );
+      
+      console.log("Appwrite response for addUsertoLadder, result");
+      return result;
+    }
+    catch (error) {
+      console.error('Error addUsertoLadder: ', error);
+      return null;
+    }
   }
 
   export async function doesEmailExist(email: string) {
