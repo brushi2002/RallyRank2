@@ -320,8 +320,10 @@ export const deleteSessions = async () => {
           });
           const deepLink = new URL(redirectUri);
           const scheme = `${deepLink.protocol}//`;
-          console.log("deepLink = " + deepLink)
-          console.log("scheme = " + scheme)
+          console.log("__DEV__ = " + __DEV__);
+          console.log("redirectUri = " + redirectUri);
+          console.log("deepLink = " + deepLink);
+          console.log("scheme = " + scheme);
 
         console.log("provider = " + pr)
 

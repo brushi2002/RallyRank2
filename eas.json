@@ -15,7 +15,12 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "distribution": "store",
+      "env":{
+        "EXPO_PUBLIC_API_URL": "EXPO_PUBLIC_API_URL",
+        "EXPO_PUBLIC_OTHER_KEY": "EXPO_PUBLIC_OTHER_KEY"
+      }
     },
     "development-simulator": {
       "developmentClient": true,

@@ -1,50 +1,235 @@
-# Welcome to Rally Rank
+# Rally Rank
 
-This is a React Native App Built using Expo with a AppWrite Backend. We also use RevenueCat to manage Subscriptions. 
+A mobile application for managing tennis ladder leagues, tracking matches, and ranking players using an ELO-based rating system.
 
-## Get started
+## Overview
 
-1. Install dependencies
+Rally Rank allows tennis players to:
+- Join or create tennis ladder leagues
+- Record match results with detailed scoring
+- Track rankings based on an ELO rating system
+- View match history and player statistics
+- Authenticate via Apple or Google OAuth
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+| Layer | Technology |
+|-------|------------|
+| **Framework** | [Expo](https://expo.dev/) (SDK 54) with [Expo Router](https://docs.expo.dev/router/introduction/) |
+| **Language** | TypeScript |
+| **UI** | React Native |
+| **Backend** | [Appwrite](https://appwrite.io/) (Cloud) |
+| **Authentication** | Appwrite OAuth (Apple, Google) + Email/Password |
+| **State Management** | React Context API |
+| **Forms** | React Hook Form |
+| **Build/Deploy** | EAS Build + TestFlight/App Store |
 
-   ```bash
-   npx expo start
-   ```
+## Project Structure
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+RallyRank/
+├── app/                      # Expo Router file-based routing
+│   ├── _layout.tsx           # Root layout with GlobalProvider
+│   ├── index.tsx             # Entry point / redirect
+│   ├── (auth)/               # Authentication screens (unauthenticated)
+│   │   ├── sign-in.tsx       # Login screen
+│   │   ├── sign-up.tsx       # Registration screen
+│   │   ├── CreateLadder.tsx  # Create new ladder
+│   │   └── _layout.tsx
+│   └── (drawer)/(tabs)/      # Main app screens (authenticated)
+│       ├── index.tsx         # Match Feed (home)
+│       ├── LadderStandings.tsx
+│       ├── EnterScore.tsx
+│       ├── Profile.tsx
+│       ├── NoLeague.tsx      # Shown when user has no league
+│       ├── JoinLadder.tsx
+│       └── _layout.tsx       # Tab navigation config
+├── components/               # Reusable components
+│   ├── auth/                 # Auth-related components
+│   │   └── ExternalButtons.tsx  # OAuth buttons (Apple/Google)
+│   ├── Profile.tsx           # Profile component
+│   ├── OnBoardingFlow.tsx
+│   └── ui/                   # UI primitives
+├── lib/                      # Core libraries and services
+│   ├── appwrite.ts           # Appwrite SDK configuration & API functions
+│   ├── globalprovider.tsx    # Global state context
+│   ├── useAppwrite.ts        # Custom hook for Appwrite calls
+│   └── geolocationApi.ts     # Location services
+├── constants/                # App constants
+│   ├── Colors.ts
+│   ├── styles.ts             # Shared styles
+│   └── theme.ts
+├── assets/                   # Images, fonts, icons
+├── app.json                  # Expo configuration
+├── eas.json                  # EAS Build configuration
+└── package.json
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Architecture
 
-## Learn more
+### Navigation Flow
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+App Start
+    │
+    ▼
+┌─────────────────────┐
+│   GlobalProvider    │  ← Fetches current user from Appwrite
+│   (Auth State)      │
+└─────────────────────┘
+    │
+    ▼
+┌─────────────────────┐     ┌─────────────────────┐
+│   isLoggedIn?       │────▶│   (auth) Stack      │
+│                     │ No  │   - sign-in         │
+│                     │     │   - sign-up         │
+└─────────────────────┘     └─────────────────────┘
+    │ Yes
+    ▼
+┌─────────────────────┐     ┌─────────────────────┐
+│  isLeagueMember?    │────▶│   NoLeague Screen   │
+│                     │ No  │   - JoinLadder      │
+└─────────────────────┘     └─────────────────────┘
+    │ Yes
+    ▼
+┌─────────────────────┐
+│   Main Tabs         │
+│   - Match Feed      │
+│   - Ladder Standings│
+│   - Enter Score     │
+│   - Profile         │
+└─────────────────────┘
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### State Management
 
-## Join the community
+The app uses React Context for global state:
 
-Join our community of developers creating universal apps.
+```typescript
+GlobalContext {
+  isLoggedIn: boolean      // Auth status
+  user: User | null        // Current user data + league membership
+  loading: boolean         // Loading state
+  refetch: () => void      // Refresh user data
+}
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Data Model (Appwrite Collections)
+
+| Collection | Description |
+|------------|-------------|
+| **Players** | User profiles (name, email, location, etc.) |
+| **Leagues** | Ladder leagues (name, code, location) |
+| **Members** | League memberships (player, league, rank, rating) |
+| **Matches** | Match results (players, scores, winner, date) |
+
+### Ranking System
+
+Rally Rank uses an **ELO rating system**:
+- New players start at **1400**
+- K-factor: **32**
+- After each match, ratings are adjusted based on expected vs actual outcome
+- Rankings within a league are ordered by rating value
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Expo CLI (`npm install -g expo-cli`)
+- EAS CLI (`npm install -g eas-cli`)
+- iOS Simulator (macOS) or Android Emulator
+- Appwrite account with project configured
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd RallyRank
+
+# Install dependencies
+npm install
+
+# Create environment file
+cp .env.example .env.local
+# Edit .env.local with your Appwrite credentials
+```
+
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```env
+EXPO_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+EXPO_PUBLIC_APPWRITE_PROJECT_ID=your-project-id
+EXPO_PUBLIC_APPWRITE_DATABASE_ID=your-database-id
+EXPO_PUBLIC_APPWRITE_PLAYER_COLLECTION_ID=your-player-collection-id
+EXPO_PUBLIC_APPWRITE_MEMBER_COLLECTION_ID=your-member-collection-id
+EXPO_PUBLIC_APPWRITE_MATCH_COLLECTION_ID=your-match-collection-id
+EXPO_PUBLIC_APPWRITE_LEAGUE_COLLECTION_ID=your-league-collection-id
+EXPO_PUBLIC_APPWRITE_STORAGE_ID=your-storage-id
+```
+
+### Running the App
+
+```bash
+# Start Expo development server
+npm start
+
+# Run on iOS simulator
+npm run ios
+
+# Run on Android emulator
+npm run android
+```
+
+### Building for Production
+
+```bash
+# Build for iOS (TestFlight)
+eas build --platform ios --profile production
+
+# Build for Android
+eas build --platform android --profile production
+
+# Submit to App Store
+eas submit --platform ios
+```
+
+**Note:** For production builds, environment variables must be configured in `eas.json` under the `env` key or via EAS Secrets (`eas secret:create`).
+
+## Appwrite Setup
+
+### Required Platforms
+
+In Appwrite Console → Settings → Platforms, add:
+
+| Platform | Bundle ID / Package |
+|----------|---------------------|
+| iOS | `com.tennisapp.app` |
+| Android | `com.tennisapp.app` |
+
+### OAuth Configuration
+
+1. **Apple Sign In**: Configure in Appwrite Console → Auth → Apple
+2. **Google Sign In**: Configure in Appwrite Console → Auth → Google
+
+Ensure the OAuth redirect scheme matches: `appwrite-callback-<PROJECT_ID>`
+
+### Database Collections
+
+Create the following collections with appropriate attributes and permissions:
+
+1. **Players**: `name`, `email`, `PhoneNumber`, `City`, `County`, `State`, `Country`, `DeviceType`
+2. **Leagues**: `Name`, `Description`, `LadderCode`, `CreateDate`, `City`, `County`, `State`, `Country`
+3. **Members**: `player` (relation), `league` (relation), `rank`, `rating_value`, `wins`, `losses`
+4. **Matches**: `league` (relation), `player_id1` (relation), `player_id2` (relation), scores, `winner`, `MatchDate`
+
+## License
+
+Private - All rights reserved
+
+## Contact
+
+For questions or testing access, contact: eric@rally-rank.com
